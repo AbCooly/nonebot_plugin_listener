@@ -1,6 +1,7 @@
 from nonebot.adapters.onebot.v11 import MessageEvent, Bot
 from nonebot.plugin import on_message
 from .config import contain, Config
+from .log import logger
 import re
 
 configs = contain.get_contain()
@@ -71,6 +72,7 @@ async def _(bot: Bot, event: MessageEvent):
                                     "id": event.message_id,
                                 }
                             }})
+                    logger.info(f"{event.get_session_id()}:{mg}")
 
                 # 直接发送
                 # await bot.send_group_msg(group_id=t, message=mg)
