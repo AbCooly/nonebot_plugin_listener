@@ -47,8 +47,8 @@ class Contain:
     # qq 具体对象(不填-所有
     # sd 发送群
     # content 监听内容(不填-所有
-config = Config([], [], [], ["717785515"], ["伊卡", "群主"])
-# config2 = Config([], [], [], ["717785515"], ["伊卡", "群主"])
+config = Config(["forward", "video"], ["123456", "321321"], [], ["427956626"], [])
+# config2 = Config([], ["2376567356"], ["298587827"], ["427956626"], ["群主"])
 # 加入多个配置到容器中
 contain = Contain(config)
 # contain = Contain(config, config2)
