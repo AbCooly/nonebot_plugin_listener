@@ -3,6 +3,7 @@ from nonebot.plugin import on_message
 from .config import contain, Config
 from .log import logger
 import re
+import nonebot
 
 configs = contain.get_contain()
 
@@ -60,38 +61,50 @@ async def _(bot: Bot, event: MessageEvent):
             cf.state_false()
             for t in cf.sd:
                 mg = event.get_message()
-                if cf.get_mg_type() not in ["redbag"]:
-                    if cf.get_mg_type() in ["record", "forward", "json"]:   # 转发不了,直接发送
-                        await bot.send_group_msg(group_id=t, message=mg)
-                    else:  # 转发消息
-                        await bot.call_api("send_group_forward_msg", **{
-                            "group_id": t,
-                            "messages": {
-                                "type": "node",
-                                "data": {
-                                    "id": event.message_id,
-                                }
-                            }})
-                    logger.info(f"{event.get_session_id()}:{mg}")
+                # nonebot.logger.info(len(cf.content))
+                # 是否设置检索字符串
+                if len(cf.content) == 0:
+                    # 设置发送标志位
+                    send = 1
+                else:
+                    send = 0
+                # 遍历content
+                for content in cf.content:
+                    if content in str(mg):
+                        send = 1
+                if send == 1:
+                    if cf.get_mg_type() not in ["redbag"]:
+                        if cf.get_mg_type() in ["record", "forward", "json"]:   # 转发不了,直接发送
+                            await bot.send_group_msg(group_id=t, message=mg)
+                        else:  # 转发消息
+                            await bot.call_api("send_group_forward_msg", **{
+                                "group_id": t,
+                                "messages": {
+                                    "type": "node",
+                                    "data": {
+                                        "id": event.message_id,
+                                    }
+                                }})
+                        logger.info(f"{event.get_session_id()}:{mg}")
 
-                # 直接发送
-                # await bot.send_group_msg(group_id=t, message=mg)
+                    # 直接发送
+                    # await bot.send_group_msg(group_id=t, message=mg)
 
-                # 发送消息节点
-                # qq = event.get_user_id()
-                # if cf.get_mg_type() in ["record", "forward", "json"]:
-                #     await bot.send_group_msg(group_id=t, message=mg)
-                # else:
-                #     info = await bot.call_api("get_stranger_info", **{
-                #         "user_id": qq
-                #     })
-                #     await bot.call_api("send_group_forward_msg", **{
-                #         "group_id": t,
-                #         "messages": {
-                #             "type": "node",
-                #             "data": {
-                #                 "name": info["nickname"],
-                #                 "uin": qq,
-                #                 "content": mg
-                #             }
-                #         }})
+                    # 发送消息节点
+                    # qq = event.get_user_id()
+                    # if cf.get_mg_type() in ["record", "forward", "json"]:
+                    #     await bot.send_group_msg(group_id=t, message=mg)
+                    # else:
+                    #     info = await bot.call_api("get_stranger_info", **{
+                    #         "user_id": qq
+                    #     })
+                    #     await bot.call_api("send_group_forward_msg", **{
+                    #         "group_id": t,
+                    #         "messages": {
+                    #             "type": "node",
+                    #             "data": {
+                    #                 "name": info["nickname"],
+                    #                 "uin": qq,
+                    #                 "content": mg
+                    #             }
+                    #         }})

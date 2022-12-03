@@ -1,11 +1,12 @@
 # 配置文件
 
 class Config:
-    def __init__(self, ty=None, obj=None, qq=None, sd=None):
+    def __init__(self, ty=None, obj=None, qq=None, sd=None, content=None):
         self.ty = ty
         self.obj = obj
         self.qq = qq
         self.sd = sd
+        self.content = content
         self.state = False
         self.mg_type = "None"
 
@@ -45,7 +46,9 @@ class Contain:
     # obj 监视群(不填-所有
     # qq 具体对象(不填-所有
     # sd 发送群
-config = Config(["forward", "video"], ["123456", "321321"], [], ["427956626"])
-config2 = Config([], ["2376567356"], ["298587827"], ["427956626"])
+    # content 监听内容(不填-所有
+config = Config(["forward", "video"], ["123456", "321321"], [], ["427956626"], [])
+# config2 = Config([], ["2376567356"], ["298587827"], ["427956626"], ["群主"])
 # 加入多个配置到容器中
-contain = Contain(config, config2)
+contain = Contain(config)
+# contain = Contain(config, config2)
