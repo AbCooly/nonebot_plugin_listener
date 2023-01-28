@@ -1,54 +1,108 @@
-# 配置文件
+from typing import Literal, List
+from pydantic import BaseModel, Extra
+
+# https://docs.go-cqhttp.org/cqcode/
+CQ_TYPE = Literal[
+    "face", "record", "video", "at", "share",
+    "music", "image", "reply", "redbag", "poke",
+    "gift", "forward", "node", "xml", "json",
+    "cardimage", "tts",
+    "plain"  # 纯文本
+]
+
 
 class Config:
-    def __init__(self, ty=None, obj=None, qq=None, sd=None, content=None):
-        self.ty = ty
-        self.obj = obj
-        self.qq = qq
-        self.sd = sd
-        self.content = content
-        self.state = False
-        self.mg_type = "None"
+    def __init__(
+            self,
+            listen_type: List["CQ_TYPE"] = None,
+            listen_groups: List[int] = None,
+            listen_users: List[int] = None,
+            listen_content: List[str] = None,
+            send_groups: List[int] = None
+    ):
+        """
+        :param listen_type: 监听消息类型，为空则所有消息类型都监听
+        :param listen_groups: 监听群，为空则所有群都监听
+        :param listen_users: 监听用户，为空则所有用户都监听
+        :param listen_content: 监听消息内容，为空则所有消息内容都监听
+        :param send_groups: 发送群
+        """
+        self._listen_type = listen_type
+        self._listen_groups = listen_groups
+        self._listen_users = listen_users
+        self._listen_content = listen_content
+        self._send_groups = send_groups
 
-    def state_true(self):
-        self.state = True
+        self._state = False
+        self._msg_type = None
+        
+    @property
+    def listen_type(self) -> List["CQ_TYPE"]:
+        return self._listen_type
+        
+    @property
+    def listen_groups(self) -> List[int]:
+        return self._listen_groups
+        
+    @property
+    def listen_users(self) -> List[int]:
+        return self._listen_users
 
-    def state_false(self):
-        self.state = False
+    @property
+    def listen_content(self) -> List[str]:
+        return self._listen_content
 
-    def get_state(self):
-        return self.state
+    @property
+    def send_groups(self) -> List[int]:
+        return self._send_groups
 
-    def set_mg_type(self, mg_type: str):
-        self.mg_type = mg_type
+    @property
+    def state(self):
+        return self._state
 
-    def get_mg_type(self):
-        return self.mg_type
+    @state.setter
+    def state(self, status: bool = False):
+        self._state = status
 
+    @property
+    def msg_type(self):
+        return self._msg_type
 
-class Contain:
-    def __init__(self, *args: Config):
-        # 存储Config
-        self.contain = []
-        for cf in args:
-            self.contain.append(cf)
-
-    def __call__(self, c: Config):
-        self.contain.append(c)
-
-    def get_contain(self):
-        return self.contain
+    @msg_type.setter
+    def msg_type(self, type_: str = None):
+        self._msg_type = type_
 
 
-# 填写配置-例子
-# Config
-    # ty 监视类型  不填-所有类型 forward-聊天记录 image-图片 record-语音 具体参考cq码 https://docs.go-cqhttp.org/cqcode/
-    # obj 监视群(不填-所有
-    # qq 具体对象(不填-所有
-    # sd 发送群
-    # content 监听内容(不填-所有
-config = Config(["forward", "video"], ["123456", "321321"], [], ["427956626"], [])
-# config2 = Config([], ["2376567356"], ["298587827"], ["427956626"], ["群主"])
-# 加入多个配置到容器中
-contain = Contain(config)
-# contain = Contain(config, config2)
+class ConfigContain:
+    def __init__(self, *cfgs: Config):
+        self._contains = list(cfgs)
+
+    def __call__(self, cfg: Config):
+        self._contains.append(cfg)
+
+    @property
+    def contains(self) -> List["Config"]:
+        return self._contains
+
+
+config = Config(
+    listen_type=[],
+    listen_groups=[533904524],
+    listen_users=[],
+    listen_content=[],
+    send_groups=[310945892]
+)
+# config2 = Config([], [2376567356], [298587827], ["群主"], [427956626])
+
+
+config_contain = ConfigContain(config)
+# config_contain = ConfigContain(config, config2)
+
+
+__all__ = [
+    "Config",
+    "ConfigContain",
+    
+    "config",
+    "config_contain"
+]

@@ -3,11 +3,11 @@ import os
 # 记录转发过的消息
 from logging import handlers
 
-IMAGE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__))) + "/"
+IMAGE_PATH = f"{os.path.abspath(os.path.join(os.path.dirname(__file__)))}/"
 if not os.path.exists(f"{IMAGE_PATH}/log/"):
     os.mkdir(f"{IMAGE_PATH}/log/")
 IMAGE_PATH += "/log/"
-file = IMAGE_PATH + "record.log"
+file = f"{IMAGE_PATH}record.log"
 
 
 class Log:
@@ -16,8 +16,7 @@ class Log:
         self.log.setLevel(logging.DEBUG)
 
     def get_formatter(self):
-        formatter = logging.Formatter('%(asctime)s --- %(levelname)s: [%(message)s]')
-        return formatter
+        return logging.Formatter('%(asctime)s --- %(levelname)s: [%(message)s]')
 
     def file_handler(self):
         file_handler = logging.FileHandler(file)
