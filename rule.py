@@ -29,7 +29,7 @@ def type_checker(event: GroupMessageEvent, cfg: Config) -> bool:
         return "plain" in cfg.listen_type if cfg.listen_type else True
 
     cfg.msg_type = contain_cq[0]
-    return contain_cq in cfg.listen_type if cfg.listen_type else True
+    return contain_cq[0] in cfg.listen_type if cfg.listen_type else True
 
 
 def group_checker(event: GroupMessageEvent, cfg: Config) -> bool:
